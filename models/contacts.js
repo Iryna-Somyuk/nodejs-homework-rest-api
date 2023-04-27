@@ -60,7 +60,7 @@ const addContact = async (body) => {
       JSON.stringify(newData, null, 2)
     );
 
-    return newData;
+    return newContact;
   } catch (error) {
     console.log(error.message);
   }
