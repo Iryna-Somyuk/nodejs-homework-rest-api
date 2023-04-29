@@ -40,11 +40,13 @@ const deleteContacts = async (req, res) => {
 
 const updateByIdContacts = async (req, res) => {
   const { contactId } = req.params;
+
   const data = await updateContact(contactId, req.body);
   if (!data) {
     throw httpError(404, "Not found");
   }
-  res.json(data);
+    res.status(200).json(data);
+
 };
 
 module.exports = {

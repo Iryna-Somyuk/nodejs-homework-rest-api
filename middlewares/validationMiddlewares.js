@@ -1,32 +1,97 @@
 const Joi = require("joi");
-const httpError = require('../helpers/HttpError');
 
 const postValidation = (req, res, next) => {
   const schema = Joi.object({
-    name: Joi.string().required(),
-    email: Joi.string().required(),
-    phone: Joi.string().required(),
+    name: Joi.string().min(7).required(),
+    email: Joi.string()
+      .email({
+        minDomainSegments: 2,
+      })
+      .required(),
+    phone: Joi.string()
+      .min(7)
+      .pattern(/^[0-9-()+ ]+$/)
+      .required(),
   });
 
   const { error } = schema.validate(req.body);
 
   if (error) {
-    const validationError = error.details[0].context.key;
-    throw httpError(400, "missing required '${validationError}' field");
+    const validationErrorType = error.details[0].type;
+    const validationErrorField = error.details[0].path[0];
+
+    switch (validationErrorType) {
+      case "any.required":
+        res.status(400).json({
+          message: `Missing required ${validationErrorField} field`,
+        });
+        break;
+      case "string.min":
+        res.status(400).json({
+          message: `${validationErrorField} must be at least 7 characters.`,
+        });
+        break;
+      case "string.pattern.base":
+        res.status(400).json({
+          message: `Please enter a valid ${validationErrorField}.`,
+        });
+        break;
+      case "string.email":
+        res.status(400).json({
+          message: `Please enter a valid ${validationErrorField}.`,
+        });
+        break;
+
+      default:
+        break;
+    }
+    return;
   }
   next();
 };
 
 const putValidation = (req, res, next) => {
   const schema = Joi.object({
-    name: Joi.string().required(),
-    email: Joi.string().required(),
-    phone: Joi.string().required(),
-  });
+    name: Joi.string().min(7),
+    email: Joi.string().email({
+      minDomainSegments: 2,
+    }),
+    phone: Joi.string()
+      .min(7)
+      .pattern(/^[0-9-()+ ]+$/),
+  }).min(1);
 
   const { error } = schema.validate(req.body);
   if (error) {
-    throw httpError(400, "missing fields");
+    const validationErrorType = error.details[0].type;
+    const validationErrorField = error.details[0].path[0];
+
+    switch (validationErrorType) {
+      case "object.min":
+        res.status(400).json({
+          message: `Missing fields.`,
+        });
+        break;
+      case "string.min":
+        res.status(400).json({
+          message: `${validationErrorField} must be at least 7 characters.`,
+        });
+        break;
+      case "string.pattern.base":
+        res.status(400).json({
+          message: `Please enter a valid ${validationErrorField}.`,
+        });
+        break;
+      case "string.email":
+        res.status(400).json({
+          message: `Please enter a valid ${validationErrorField}.`,
+        });
+        break;
+
+      default:
+        break;
+    }
+    return;
   }
 
   next();
