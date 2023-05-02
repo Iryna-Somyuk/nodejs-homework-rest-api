@@ -99,7 +99,31 @@ const putValidation = (req, res, next) => {
   next();
 };
 
+const updateFavoriteSchema = (req, res, next) => {
+  const schema = Joi.object({
+    favorite: Joi.boolean().required(),
+  });
+  const { error } = schema.validate(req.body);
+  if (error) {
+    const validationErrorType = error.details[0].type;
+    const validationErrorField = error.details[0].path[0];
+    console.log(validationErrorField);
+    switch (validationErrorType) {
+      case "any.required":
+        res.status(400).json({
+          message: `Missing field ${validationErrorField}`,
+        });
+        break;
+      default:
+        break;
+    }
+    return;
+  }
+  next();
+};
+
 module.exports = {
   postValidation,
   putValidation,
+  updateFavoriteSchema,
 };
