@@ -6,19 +6,20 @@ const {
   updateFavoriteSchema,
 } = require("../../middlewares/validationMiddlewares");
 const isValidId = require("../../middlewares/isValidId");
+const authenticate = require("../../middlewares/authenticate");
 
 const router = express.Router();
 
-router.get("/", ctrl.getAllContacts);
+router.get("/", authenticate, ctrl.getAllContacts);
 
-router.get("/:contactId", isValidId, ctrl.getByIdContacts);
+router.get("/:contactId", authenticate, isValidId, ctrl.getByIdContacts);
 
-router.post("/", postValidation, ctrl.postContacts);
+router.post("/", authenticate, postValidation, ctrl.postContacts);
 
-router.delete("/:contactId", isValidId, ctrl.deleteContacts);
+router.delete("/:contactId", authenticate, isValidId, ctrl.deleteContacts);
 
-router.put("/:contactId", isValidId, putValidation, ctrl.updateByIdContacts);
+router.put("/:contactId", authenticate, isValidId, putValidation, ctrl.updateByIdContacts);
 
-router.patch("/:contactId/favorite", isValidId, updateFavoriteSchema, ctrl.updateByIdFavorite);
+router.patch("/:contactId/favorite", authenticate, isValidId, updateFavoriteSchema, ctrl.updateByIdFavorite);
 
 module.exports = router;
