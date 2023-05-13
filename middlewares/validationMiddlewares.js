@@ -12,11 +12,11 @@ const postValidation = (req, res, next) => {
       .min(7)
       .pattern(/^[0-9-()+ ]+$/)
       .required(),
-    favorite: Joi.boolean,
+    favorite: Joi.boolean(),
   });
 
   const { error } = schema.validate(req.body);
-
+  console.log(error);
   if (error) {
     const validationErrorType = error.details[0].type;
     const validationErrorField = error.details[0].path[0];
@@ -121,11 +121,6 @@ const updateFavoriteSchema = (req, res, next) => {
   }
   next();
 };
-
-
-
-
-
 
 module.exports = {
   postValidation,

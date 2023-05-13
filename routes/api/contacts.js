@@ -18,8 +18,20 @@ router.post("/", authenticate, postValidation, ctrl.postContacts);
 
 router.delete("/:contactId", authenticate, isValidId, ctrl.deleteContacts);
 
-router.put("/:contactId", authenticate, isValidId, putValidation, ctrl.updateByIdContacts);
+router.put(
+  "/:contactId",
+  authenticate,
+  isValidId,
+  putValidation,
+  ctrl.updateByIdContacts
+);
 
-router.patch("/:contactId/favorite", authenticate, isValidId, updateFavoriteSchema, ctrl.updateByIdFavorite);
+router.patch(
+  "/:contactId/favorite",
+  authenticate,
+  isValidId,
+  updateFavoriteSchema,
+  ctrl.updateByIdFavorite
+);
 
 module.exports = router;
