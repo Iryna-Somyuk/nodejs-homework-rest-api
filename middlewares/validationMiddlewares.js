@@ -60,7 +60,7 @@ const putValidation = (req, res, next) => {
     phone: Joi.string()
       .min(7)
       .pattern(/^[0-9-()+ ]+$/),
-    favorite: Joi.boolean,
+    favorite: Joi.boolean(),
   }).min(1);
 
   const { error } = schema.validate(req.body);
