@@ -16,7 +16,7 @@ const postValidation = (req, res, next) => {
   });
 
   const { error } = schema.validate(req.body);
-  console.log(error);
+  // console.log(error);
   if (error) {
     const validationErrorType = error.details[0].type;
     const validationErrorField = error.details[0].path[0];
@@ -95,7 +95,6 @@ const putValidation = (req, res, next) => {
     }
     return;
   }
-
   next();
 };
 
@@ -122,8 +121,43 @@ const updateFavoriteSchema = (req, res, next) => {
   next();
 };
 
+const postVerify = (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string()
+      .email({
+        minDomainSegments: 2,
+      })
+      .required(),
+  });
+  const { error } = schema.validate(req.body);
+
+  if (error) {
+    const validationErrorType = error.details[0].type;
+    const validationErrorField = error.details[0].path[0];
+
+    switch (validationErrorType) {
+      case "any.required":
+        res.status(400).json({
+          message: `Missing required field ${validationErrorField}.`,
+        });
+        break;
+      case "string.email":
+        res.status(400).json({
+          message: `Please enter a valid ${validationErrorField}.`,
+        });
+        break;
+
+      default:
+        break;
+    }
+    return;
+  }
+  next();
+};
+
 module.exports = {
   postValidation,
   putValidation,
   updateFavoriteSchema,
+  postVerify,
 };
